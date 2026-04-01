@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Secret Coders : Course Video</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-light bg-white shadow-sm p-3 mb-4 d-flex justify-content-between align-items-center">
+        <a href="courses.html" class="btn btn-outline-primary fw-bold"><i class="fa fa-arrow-left me-2"></i>Back to Courses</a>
+        <h4 class="m-0 fw-bold" style="color: #fb873f;" id="video-title">Loading Course...</h4>
+        <div style="width: 150px;"></div> </nav>
+
+    <div class="container-fluid mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="shadow-lg rounded overflow-hidden bg-dark" style="border: 2px solid #fb873f;">
+                    <iframe 
+    id="course-video" 
+    width="100%" 
+    height="600px" 
+    src="" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+</iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+async function loadVideo() {
+    const urlParams = new URLSearchParams(window.location.search);
+const courseId = urlParams.get('id');
+console.log("Course ID identified:", courseId); // Check if this shows up in your console
+
+    if (!courseId) {
+        document.getElementById('video-title').innerText = "No Course Selected";
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/api/courses/${courseId}`);
+        const data = await response.json();
+
+        if (data.success) {
+            console.log("Loading video URL:", data.course.video_url); // Check your console for this!
+            document.getElementById('video-title').innerText = data.course.title;
+            document.getElementById('course-video').src = data.course.video_url;
+        } else {
+            document.getElementById('video-title').innerText = "Course not found in database.";
+        }
+    } catch (error) {
+        console.error("Fetch Error:", error);
+        document.getElementById('video-title').innerText = "Server Error!";
+    }
+}
+window.onload = loadVideo;
+</script>
